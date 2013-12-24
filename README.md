@@ -14,6 +14,7 @@ documents.
 
 ```
 go get github.com/mfonda/simhash
+```
 
 # Usage
 
