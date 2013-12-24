@@ -5,28 +5,28 @@
 package simhash
 
 import (
-    "testing"
+	"testing"
 )
 
 type compareTest struct {
-    a uint64
-    b uint64
-    expected uint8
+	a        uint64
+	b        uint64
+	expected uint8
 }
 
-var compareTests = []compareTest {
-    {4, 3, 3}, {3, 4, 3},
-    {4, 2, 2}, {2, 4, 2},
-    {4, 1, 2}, {1, 4, 2},
-    {4, 0, 1}, {0, 4, 1},
-    {4, 4, 0},
+var compareTests = []compareTest{
+	{4, 3, 3}, {3, 4, 3},
+	{4, 2, 2}, {2, 4, 2},
+	{4, 1, 2}, {1, 4, 2},
+	{4, 0, 1}, {0, 4, 1},
+	{4, 4, 0},
 }
 
 func TestCompare(t *testing.T) {
-    for _, tt := range compareTests {
-        actual := Compare(tt.a, tt.b)
-        if actual != tt.expected {
-            t.Errorf("Compare(%d, %d): expected %d, actual %d", tt.a, tt.b, tt.expected, actual)
-        }
-    }
+	for _, tt := range compareTests {
+		actual := Compare(tt.a, tt.b)
+		if actual != tt.expected {
+			t.Errorf("Compare(%d, %d): expected %d, actual %d", tt.a, tt.b, tt.expected, actual)
+		}
+	}
 }
