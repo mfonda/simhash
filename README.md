@@ -25,7 +25,7 @@ will go towards this.
 
 Example usage:
 
-```
+```go
 package main
 
 import (
