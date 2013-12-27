@@ -10,9 +10,9 @@ import (
 
 func TestSimhash(t *testing.T) {
 	var fp = []uint64{
-		Simhash(WordFeatureSet{[]byte("this is a test phrase")}),
-		Simhash(WordFeatureSet{[]byte("this is a test phrass")}),
-		Simhash(WordFeatureSet{[]byte("foo bar")}),
+		Simhash(&WordFeatureSet{[]byte("this is a test phrase")}),
+		Simhash(&WordFeatureSet{[]byte("this is a test phrass")}),
+		Simhash(&WordFeatureSet{[]byte("foo bar")}),
 	}
 
 	if Compare(fp[0], fp[1]) != 2 {

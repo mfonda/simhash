@@ -29,7 +29,6 @@ type Feature interface {
 
 // FeatureSet represents a set of features in a given document
 type FeatureSet interface {
-	// GetFeatures returns a []Feature
 	GetFeatures() []Feature
 }
 
@@ -41,12 +40,13 @@ func Vectorize(features []Feature) Vector {
 	var v Vector
 	for _, feature := range features {
 		sum := feature.Sum()
+		weight := feature.Weight()
 		for i := uint8(0); i < 64; i++ {
 			bit := ((sum >> i) & 1)
 			if bit == 1 {
-				v[i] += feature.Weight()
+				v[i] += weight
 			} else {
-				v[i] -= feature.Weight()
+				v[i] -= weight
 			}
 		}
 	}
@@ -122,14 +122,19 @@ type WordFeatureSet struct {
 	b []byte
 }
 
-func NewWordFeatureSet(b []byte) WordFeatureSet {
-	return WordFeatureSet{b}
+func NewWordFeatureSet(b []byte) *WordFeatureSet {
+	fs := &WordFeatureSet{b}
+	fs.normalize()
+	return fs
+}
+
+func (w *WordFeatureSet) normalize() {
+	w.b = bytes.ToLower(w.b)
 }
 
 // Returns a []Feature representing each word in the byte slice
-func (w WordFeatureSet) GetFeatures() []Feature {
-	b := bytes.ToLower(w.b)
-	words := regexp.MustCompile(`[\w']+(?:\://[\w\./]+){0,1}`).FindAll(b, -1)
+func (w *WordFeatureSet) GetFeatures() []Feature {
+	words := regexp.MustCompile(`[\w']+(?:\://[\w\./]+){0,1}`).FindAll(w.b, -1)
 	features := make([]Feature, len(words))
 	for i, w := range words {
 		features[i] = NewFeature(w)
