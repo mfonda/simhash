@@ -14,6 +14,7 @@ import (
 	"bytes"
 	"hash/fnv"
 	"regexp"
+	"code.google.com/p/go.text/unicode/norm"
 )
 
 type Vector [64]int
@@ -132,12 +133,47 @@ func (w *WordFeatureSet) normalize() {
 	w.b = bytes.ToLower(w.b)
 }
 
+var boundaries = regexp.MustCompile(`[\w']+(?:\://[\w\./]+){0,1}`)
+var unicodeBoundaries = regexp.MustCompile(`[\pL-_']+`)
+
 // Returns a []Feature representing each word in the byte slice
 func (w *WordFeatureSet) GetFeatures() []Feature {
-	words := regexp.MustCompile(`[\w']+(?:\://[\w\./]+){0,1}`).FindAll(w.b, -1)
-	features := make([]Feature, len(words))
-	for i, w := range words {
-		features[i] = NewFeature(w)
-	}
-	return features
+    return getFeatures(w.b, boundaries)
+}
+
+// UnicodeWordFeatureSet is a feature set in which each word is a feature,
+// all equal weight.
+//
+// See: http://blog.golang.org/normalization
+// See: https://groups.google.com/forum/#!topic/golang-nuts/YyH1f_qCZVc
+type UnicodeWordFeatureSet struct {
+	b []byte
+	f norm.Form
+}
+
+func NewUnicodeWordFeatureSet(b []byte, f norm.Form) *UnicodeWordFeatureSet {
+	fs := &UnicodeWordFeatureSet{b, f}
+	fs.normalize()
+	return fs
+}
+
+func (w *UnicodeWordFeatureSet) normalize() {
+	b := bytes.ToLower(w.f.Append(nil, w.b...))
+	w.b = b
+}
+
+// Returns a []Feature representing each word in the byte slice
+func (w *UnicodeWordFeatureSet) GetFeatures() []Feature {
+    return getFeatures(w.b, unicodeBoundaries)
+}
+
+// Splits the given []byte using the given regexp, then returns a slice
+// containing a Feature constructed from each piece matched by the regexp
+func getFeatures(b []byte, r *regexp.Regexp) []Feature {
+    words := r.FindAll(b, -1)
+    features := make([]Feature, len(words))
+    for i, w := range words {
+        features[i] = NewFeature(w)
+    }
+    return features
 }
