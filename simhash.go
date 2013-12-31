@@ -12,9 +12,9 @@ package simhash
 
 import (
 	"bytes"
+	"code.google.com/p/go.text/unicode/norm"
 	"hash/fnv"
 	"regexp"
-	"code.google.com/p/go.text/unicode/norm"
 )
 
 type Vector [64]int
@@ -138,7 +138,7 @@ var unicodeBoundaries = regexp.MustCompile(`[\pL-_']+`)
 
 // Returns a []Feature representing each word in the byte slice
 func (w *WordFeatureSet) GetFeatures() []Feature {
-    return getFeatures(w.b, boundaries)
+	return getFeatures(w.b, boundaries)
 }
 
 // UnicodeWordFeatureSet is a feature set in which each word is a feature,
@@ -164,16 +164,16 @@ func (w *UnicodeWordFeatureSet) normalize() {
 
 // Returns a []Feature representing each word in the byte slice
 func (w *UnicodeWordFeatureSet) GetFeatures() []Feature {
-    return getFeatures(w.b, unicodeBoundaries)
+	return getFeatures(w.b, unicodeBoundaries)
 }
 
 // Splits the given []byte using the given regexp, then returns a slice
 // containing a Feature constructed from each piece matched by the regexp
 func getFeatures(b []byte, r *regexp.Regexp) []Feature {
-    words := r.FindAll(b, -1)
-    features := make([]Feature, len(words))
-    for i, w := range words {
-        features[i] = NewFeature(w)
-    }
-    return features
+	words := r.FindAll(b, -1)
+	features := make([]Feature, len(words))
+	for i, w := range words {
+		features[i] = NewFeature(w)
+	}
+	return features
 }
