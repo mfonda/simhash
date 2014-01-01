@@ -127,3 +127,9 @@ func BenchmarkSimhashBytes(b *testing.B) {
 		SimhashBytes(w)
 	}
 }
+
+func BenchmarkShingle(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Shingle(3, w)
+	}
+}

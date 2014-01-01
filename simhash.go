@@ -207,3 +207,27 @@ func getFeatures(b []byte, r *regexp.Regexp) []Feature {
 	}
 	return features
 }
+
+// Shingle returns the w-shingling of the given set of bytes. For example, if the given
+// input was {"this", "is", "a", "test"}, this returns {"this is", "is a", "a test"}
+func Shingle(w int, b [][]byte) [][]byte {
+	if w < 1 {
+		// TODO: use error here instead of panic?
+		panic("simhash.Shingle(): k must be a positive integer")
+	}
+
+	if w == 1 {
+		return b
+	}
+
+	if w > len(b) {
+		w = len(b)
+	}
+
+	count := len(b) - w + 1
+	shingles := make([][]byte, count)
+	for i := 0; i < count; i++ {
+		shingles[i] = bytes.Join(b[i:i+w], []byte(" "))
+	}
+	return shingles
+}
