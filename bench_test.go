@@ -82,10 +82,14 @@ Vivamus commodo eros eget neque pharetra euismod. Cras sed elit odio. Proin libe
 
 var fs *WordFeatureSet
 var v Vector
+var f []Feature
+var w [][]byte
 
 func init() {
 	fs = NewWordFeatureSet(testString)
 	v = Vectorize(fs.GetFeatures())
+	f = fs.GetFeatures()
+	w = boundaries.FindAll(testString, -1)
 }
 
 func BenchmarkWordFeatureSetGetFeatures(b *testing.B) {
@@ -95,14 +99,31 @@ func BenchmarkWordFeatureSetGetFeatures(b *testing.B) {
 }
 
 func BenchmarkVectorize(b *testing.B) {
-	f := fs.GetFeatures()
 	for i := 0; i < b.N; i++ {
 		Vectorize(f)
+	}
+}
+
+func BenchmarkVectorizeBytes(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		VectorizeBytes(w)
 	}
 }
 
 func BenchmarkFingerprint(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		Fingerprint(v)
+	}
+}
+
+func BenchmarkSimhash(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Simhash(&WordFeatureSet{testString})
+	}
+}
+
+func BenchmarkSimhashBytes(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		SimhashBytes(w)
 	}
 }

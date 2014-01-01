@@ -28,3 +28,16 @@ func TestVectorize(t *testing.T) {
 		t.Errorf("Vectorize failed to return expected result")
 	}
 }
+
+func TestVectorizeBytes(t *testing.T) {
+	features := [][]byte{
+		[]byte("test string"),
+		[]byte("test thing"),
+	}
+	v := VectorizeBytes(features)
+	expected := Vector{0, -2, 0, 0, -2, -2, -2, 0, 0, 0, -2, 0, 0, 0, -2, 0, -2, 0, 0, 0, 0, 0, 2, 2, 2, -2, 0, -2, 0, -2, 2, 0, 0, 2, 0, 2, -2, 0, 2, 0, 2, -2, 0, 0, 2, 0, 0, 2, 0, 0, 0, 2, 0, 0, 2, -2, -2, 2, -2, 0, 2, 0, 2, -2}
+
+	if v != expected {
+		t.Errorf("Vectorize failed to return expected result")
+	}
+}

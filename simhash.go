@@ -54,6 +54,31 @@ func Vectorize(features []Feature) Vector {
 	return v
 }
 
+// VectorizeBytes generates 64 dimension vectors given a set of [][]byte,
+// where each []byte is a feature with even weight.
+//
+// Vectors are initialized to zero. The i-th element of the vector is then
+// incremented by weight of the i-th feature if the i-th bit of the feature
+// is set, and decremented by the weight of the i-th feature otherwise.
+func VectorizeBytes(features [][]byte) Vector {
+	var v Vector
+	h := fnv.New64()
+	for _, feature := range features {
+		h.Reset()
+		h.Write(feature)
+		sum := h.Sum64()
+		for i := uint8(0); i < 64; i++ {
+			bit := ((sum >> i) & 1)
+			if bit == 1 {
+				v[i]++
+			} else {
+				v[i]--
+			}
+		}
+	}
+	return v
+}
+
 // Fingerprint returns a 64-bit fingerprint of the given vector.
 // The fingerprint f of a given 64-dimension vector v is defined as follows:
 //   f[i] = 1 if v[i] >= 0
@@ -112,9 +137,14 @@ func Compare(a uint64, b uint64) uint8 {
 	return c
 }
 
-// Returns a 64-bit simhash of the given bytes
+// Returns a 64-bit simhash of the given feature set
 func Simhash(fs FeatureSet) uint64 {
 	return Fingerprint(Vectorize(fs.GetFeatures()))
+}
+
+// Returns a 64-bit simhash of the given bytes
+func SimhashBytes(b [][]byte) uint64 {
+	return Fingerprint(VectorizeBytes(b))
 }
 
 // WordFeatureSet is a feature set in which each word is a feature,
