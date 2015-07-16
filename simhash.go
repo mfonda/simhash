@@ -12,9 +12,10 @@ package simhash
 
 import (
 	"bytes"
-	"code.google.com/p/go.text/unicode/norm"
 	"hash/fnv"
 	"regexp"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 type Vector [64]int
