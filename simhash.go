@@ -12,7 +12,7 @@ package simhash
 
 import (
 	"bytes"
-	"code.google.com/p/go.text/unicode/norm"
+	"golang.org/x/text/unicode/norm"
 	"hash/fnv"
 	"regexp"
 )
